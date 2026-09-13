@@ -1,0 +1,506 @@
+{
+  "infos": {
+    "bob": {
+      "version": "0.20.0-beta commit=lightning-terminal-v0.16.0-alpha",
+      "identity_pubkey": "020663058b8f8e838ad818ec9c4461615a5193ecd0732279e859045c6d076995b3",
+      "alias": "bob",
+      "chains": [
+        {
+          "chain": "bitcoin",
+          "network": "regtest"
+        }
+      ],
+      "synced_to_chain": true,
+      "block_height": 113
+    },
+    "carol": {
+      "version": "0.20.0-beta commit=lightning-terminal-v0.16.0-alpha",
+      "identity_pubkey": "0316d7b50bc4c36e8766a0b9bd4e2222adf15b4c23b2efa9de8abff12cb9e94c37",
+      "alias": "carol",
+      "chains": [
+        {
+          "chain": "bitcoin",
+          "network": "regtest"
+        }
+      ],
+      "synced_to_chain": true,
+      "block_height": 113
+    },
+    "alice": {
+      "version": "0.20.0-beta commit=v0.20.0-beta",
+      "identity_pubkey": "0346fc71c5a3f5d3e5245e4801884685d99596be36e53282fb50fe8a0418e8d47e",
+      "alias": "alice",
+      "chains": [
+        {
+          "chain": "bitcoin",
+          "network": "regtest"
+        }
+      ],
+      "synced_to_chain": true,
+      "block_height": 113
+    }
+  },
+  "channels": {
+    "bob": {
+      "channels": [
+        {
+          "active": true,
+          "remote_pubkey": "0316d7b50bc4c36e8766a0b9bd4e2222adf15b4c23b2efa9de8abff12cb9e94c37",
+          "channel_point": "c2f7bc63a59da85779043d4bf2c2fa146032f9b20d37fa5f182c9bbfc8692b0b:0",
+          "chan_id": "0b2b69c8bf9b2c185ffa370db2f9326014fac2f24b3d047957a89da563bcf7c2",
+          "scid": "122045790748672",
+          "scid_str": "111x1x0",
+          "capacity": "100000",
+          "local_balance": "96566",
+          "remote_balance": "354",
+          "commit_fee": "2420",
+          "commit_weight": "958",
+          "fee_per_kw": "2500",
+          "unsettled_balance": "0",
+          "total_satoshis_sent": "354",
+          "total_satoshis_received": "0",
+          "num_updates": "2",
+          "pending_htlcs": [],
+          "csv_delay": 144,
+          "private": true,
+          "initiator": true,
+          "chan_status_flags": "ChanStatusDefault",
+          "local_chan_reserve_sat": "1000",
+          "remote_chan_reserve_sat": "1062",
+          "static_remote_key": false,
+          "commitment_type": "SIMPLE_TAPROOT_OVERLAY",
+          "lifetime": "6282",
+          "uptime": "6282",
+          "close_address": "",
+          "push_amount_sat": "0",
+          "thaw_height": 0,
+          "local_constraints": {
+            "csv_delay": 144,
+            "chan_reserve_sat": "1000",
+            "dust_limit_sat": "354",
+            "max_pending_amt_msat": "99000000",
+            "min_htlc_msat": "1",
+            "max_accepted_htlcs": 83
+          },
+          "remote_constraints": {
+            "csv_delay": 144,
+            "chan_reserve_sat": "1062",
+            "dust_limit_sat": "354",
+            "max_pending_amt_msat": "99000000",
+            "min_htlc_msat": "1",
+            "max_accepted_htlcs": 83
+          },
+          "alias_scids": [
+            "17592186044416000000"
+          ],
+          "zero_conf": false,
+          "zero_conf_confirmed_scid": "0",
+          "peer_alias": "carol",
+          "peer_scid_alias": "17592186044416000000",
+          "memo": "",
+          "custom_channel_data": {
+            "funding_assets": [
+              {
+                "version": 1,
+                "asset_genesis": {
+                  "genesis_point": "d23da2afa18dc09b3e4e21dd0700720076f4b41ad7c78a4f829baf2c9276fcf6:1",
+                  "name": "LabUSD",
+                  "meta_hash": "4444444444444444444444444444444444444444444444444444444444444444",
+                  "asset_id": "d75fc6e900b3360edfc8452537858fea520fa1f9eaeefca90d51bfb1ebc0fbbd"
+                },
+                "amount": 100000,
+                "script_key": "023333333333333333333333333333333333333333333333333333333333333333",
+                "decimal_display": 0
+              }
+            ],
+            "local_assets": [
+              {
+                "asset_id": "d75fc6e900b3360edfc8452537858fea520fa1f9eaeefca90d51bfb1ebc0fbbd",
+                "amount": 98999
+              }
+            ],
+            "remote_assets": [
+              {
+                "asset_id": "d75fc6e900b3360edfc8452537858fea520fa1f9eaeefca90d51bfb1ebc0fbbd",
+                "amount": 1001
+              }
+            ],
+            "outgoing_htlcs": [],
+            "incoming_htlcs": [],
+            "capacity": 100000,
+            "local_balance": 98999,
+            "remote_balance": 1001,
+            "outgoing_htlc_balance": 0,
+            "incoming_htlc_balance": 0
+          }
+        }
+      ]
+    },
+    "carol": {
+      "channels": [
+        {
+          "active": true,
+          "remote_pubkey": "020663058b8f8e838ad818ec9c4461615a5193ecd0732279e859045c6d076995b3",
+          "channel_point": "c2f7bc63a59da85779043d4bf2c2fa146032f9b20d37fa5f182c9bbfc8692b0b:0",
+          "chan_id": "0b2b69c8bf9b2c185ffa370db2f9326014fac2f24b3d047957a89da563bcf7c2",
+          "scid": "122045790748672",
+          "scid_str": "111x1x0",
+          "capacity": "100000",
+          "local_balance": "354",
+          "remote_balance": "96566",
+          "commit_fee": "2420",
+          "commit_weight": "958",
+          "fee_per_kw": "2500",
+          "unsettled_balance": "0",
+          "total_satoshis_sent": "0",
+          "total_satoshis_received": "354",
+          "num_updates": "2",
+          "pending_htlcs": [],
+          "csv_delay": 144,
+          "private": true,
+          "initiator": false,
+          "chan_status_flags": "ChanStatusDefault",
+          "local_chan_reserve_sat": "1062",
+          "remote_chan_reserve_sat": "1000",
+          "static_remote_key": false,
+          "commitment_type": "SIMPLE_TAPROOT_OVERLAY",
+          "lifetime": "6281",
+          "uptime": "6281",
+          "close_address": "",
+          "push_amount_sat": "0",
+          "thaw_height": 0,
+          "local_constraints": {
+            "csv_delay": 144,
+            "chan_reserve_sat": "1062",
+            "dust_limit_sat": "354",
+            "max_pending_amt_msat": "99000000",
+            "min_htlc_msat": "1",
+            "max_accepted_htlcs": 83
+          },
+          "remote_constraints": {
+            "csv_delay": 144,
+            "chan_reserve_sat": "1000",
+            "dust_limit_sat": "354",
+            "max_pending_amt_msat": "99000000",
+            "min_htlc_msat": "1",
+            "max_accepted_htlcs": 83
+          },
+          "alias_scids": [
+            "17592186044416000000"
+          ],
+          "zero_conf": false,
+          "zero_conf_confirmed_scid": "0",
+          "peer_alias": "bob",
+          "peer_scid_alias": "17592186044416000000",
+          "memo": "",
+          "custom_channel_data": {
+            "funding_assets": [
+              {
+                "version": 1,
+                "asset_genesis": {
+                  "genesis_point": "d23da2afa18dc09b3e4e21dd0700720076f4b41ad7c78a4f829baf2c9276fcf6:1",
+                  "name": "LabUSD",
+                  "meta_hash": "4444444444444444444444444444444444444444444444444444444444444444",
+                  "asset_id": "d75fc6e900b3360edfc8452537858fea520fa1f9eaeefca90d51bfb1ebc0fbbd"
+                },
+                "amount": 100000,
+                "script_key": "023333333333333333333333333333333333333333333333333333333333333333",
+                "decimal_display": 0
+              }
+            ],
+            "local_assets": [
+              {
+                "asset_id": "d75fc6e900b3360edfc8452537858fea520fa1f9eaeefca90d51bfb1ebc0fbbd",
+                "amount": 1001
+              }
+            ],
+            "remote_assets": [
+              {
+                "asset_id": "d75fc6e900b3360edfc8452537858fea520fa1f9eaeefca90d51bfb1ebc0fbbd",
+                "amount": 98999
+              }
+            ],
+            "outgoing_htlcs": [],
+            "incoming_htlcs": [],
+            "capacity": 100000,
+            "local_balance": 1001,
+            "remote_balance": 98999,
+            "outgoing_htlc_balance": 0,
+            "incoming_htlc_balance": 0
+          }
+        },
+        {
+          "active": true,
+          "remote_pubkey": "0346fc71c5a3f5d3e5245e4801884685d99596be36e53282fb50fe8a0418e8d47e",
+          "channel_point": "2920e9360a404e9ca2ff98625ffb0c3c6e94ce024fe5c0ce859e0994533fff48:0",
+          "chan_id": "48ff3f5394099e85cec0e54f02ce946e3c0cfb5f6298ffa29c4e400a36e92029",
+          "scid": "115448720982016",
+          "scid_str": "105x1x0",
+          "capacity": "1000000",
+          "local_balance": "985530",
+          "remote_balance": "11000",
+          "commit_fee": "2810",
+          "commit_weight": "1116",
+          "fee_per_kw": "2500",
+          "unsettled_balance": "0",
+          "total_satoshis_sent": "11000",
+          "total_satoshis_received": "0",
+          "num_updates": "4",
+          "pending_htlcs": [],
+          "csv_delay": 144,
+          "private": false,
+          "initiator": true,
+          "chan_status_flags": "ChanStatusDefault",
+          "local_chan_reserve_sat": "10000",
+          "remote_chan_reserve_sat": "10000",
+          "static_remote_key": false,
+          "commitment_type": "ANCHORS",
+          "lifetime": "39993",
+          "uptime": "39993",
+          "close_address": "",
+          "push_amount_sat": "0",
+          "thaw_height": 0,
+          "local_constraints": {
+            "csv_delay": 144,
+            "chan_reserve_sat": "10000",
+            "dust_limit_sat": "354",
+            "max_pending_amt_msat": "990000000",
+            "min_htlc_msat": "1",
+            "max_accepted_htlcs": 483
+          },
+          "remote_constraints": {
+            "csv_delay": 144,
+            "chan_reserve_sat": "10000",
+            "dust_limit_sat": "354",
+            "max_pending_amt_msat": "990000000",
+            "min_htlc_msat": "1",
+            "max_accepted_htlcs": 483
+          },
+          "alias_scids": [],
+          "zero_conf": false,
+          "zero_conf_confirmed_scid": "0",
+          "peer_alias": "alice",
+          "peer_scid_alias": "0",
+          "memo": "",
+          "custom_channel_data": ""
+        }
+      ]
+    },
+    "alice": {
+      "channels": [
+        {
+          "active": true,
+          "remote_pubkey": "0316d7b50bc4c36e8766a0b9bd4e2222adf15b4c23b2efa9de8abff12cb9e94c37",
+          "channel_point": "2920e9360a404e9ca2ff98625ffb0c3c6e94ce024fe5c0ce859e0994533fff48:0",
+          "chan_id": "48ff3f5394099e85cec0e54f02ce946e3c0cfb5f6298ffa29c4e400a36e92029",
+          "scid": "115448720982016",
+          "scid_str": "105x1x0",
+          "capacity": "1000000",
+          "local_balance": "11000",
+          "remote_balance": "985530",
+          "commit_fee": "2810",
+          "commit_weight": "1116",
+          "fee_per_kw": "2500",
+          "unsettled_balance": "0",
+          "total_satoshis_sent": "0",
+          "total_satoshis_received": "11000",
+          "num_updates": "4",
+          "pending_htlcs": [],
+          "csv_delay": 144,
+          "private": false,
+          "initiator": false,
+          "chan_status_flags": "ChanStatusDefault",
+          "local_chan_reserve_sat": "10000",
+          "remote_chan_reserve_sat": "10000",
+          "static_remote_key": false,
+          "commitment_type": "ANCHORS",
+          "lifetime": "39995",
+          "uptime": "39995",
+          "close_address": "",
+          "push_amount_sat": "0",
+          "thaw_height": 0,
+          "local_constraints": {
+            "csv_delay": 144,
+            "chan_reserve_sat": "10000",
+            "dust_limit_sat": "354",
+            "max_pending_amt_msat": "990000000",
+            "min_htlc_msat": "1",
+            "max_accepted_htlcs": 483
+          },
+          "remote_constraints": {
+            "csv_delay": 144,
+            "chan_reserve_sat": "10000",
+            "dust_limit_sat": "354",
+            "max_pending_amt_msat": "990000000",
+            "min_htlc_msat": "1",
+            "max_accepted_htlcs": 483
+          },
+          "alias_scids": [],
+          "zero_conf": false,
+          "zero_conf_confirmed_scid": "0",
+          "peer_alias": "carol",
+          "peer_scid_alias": "0",
+          "memo": "",
+          "custom_channel_data": ""
+        }
+      ]
+    }
+  },
+  "payment": {
+    "payment_hash": "02d449a31fbb267c8f352e9968a79e3e5fc95c1bbeaa502fd6454ebde5a4bedc",
+    "value": "1000",
+    "creation_date": "1789337888",
+    "fee": "1",
+    "payment_preimage": "1111111111111111111111111111111111111111111111111111111111111111",
+    "value_sat": "1000",
+    "value_msat": "1000000",
+    "payment_request": "lnbcrt-fixture-not-payable",
+    "status": "SUCCEEDED",
+    "fee_sat": "1",
+    "fee_msat": "1001",
+    "creation_time_ns": "1789337888886085217",
+    "htlcs": [
+      {
+        "attempt_id": "1",
+        "status": "SUCCEEDED",
+        "route": {
+          "total_time_lock": 276,
+          "total_fees": "1",
+          "total_amt": "1001",
+          "hops": [
+            {
+              "chan_id": "122045790748672",
+              "chan_capacity": "100000",
+              "amt_to_forward": "1000",
+              "fee": "1",
+              "expiry": 196,
+              "amt_to_forward_msat": "1000000",
+              "fee_msat": "1001",
+              "pub_key": "0316d7b50bc4c36e8766a0b9bd4e2222adf15b4c23b2efa9de8abff12cb9e94c37",
+              "tlv_payload": true,
+              "mpp_record": null,
+              "amp_record": null,
+              "custom_records": {},
+              "metadata": "",
+              "blinding_point": "",
+              "encrypted_data": "",
+              "total_amt_msat": "0"
+            },
+            {
+              "chan_id": "115448720982016",
+              "chan_capacity": "1000000",
+              "amt_to_forward": "1000",
+              "fee": "0",
+              "expiry": 196,
+              "amt_to_forward_msat": "1000000",
+              "fee_msat": "0",
+              "pub_key": "0346fc71c5a3f5d3e5245e4801884685d99596be36e53282fb50fe8a0418e8d47e",
+              "tlv_payload": true,
+              "mpp_record": {
+                "payment_addr": "2222222222222222222222222222222222222222222222222222222222222222",
+                "total_amt_msat": "1000000"
+              },
+              "amp_record": null,
+              "custom_records": {},
+              "metadata": "",
+              "blinding_point": "",
+              "encrypted_data": "",
+              "total_amt_msat": "0"
+            }
+          ],
+          "total_fees_msat": "1001",
+          "total_amt_msat": "1001001",
+          "first_hop_amount_msat": "354000",
+          "custom_channel_data": {
+            "balances": [
+              {
+                "asset_id": "d75fc6e900b3360edfc8452537858fea520fa1f9eaeefca90d51bfb1ebc0fbbd",
+                "amount": 1001
+              }
+            ],
+            "rfq_id": "29a20d219d97a622b98ea3c2f7292d56ea70d0188807931bf607afca58248329",
+            "available_rfq_ids": [
+              "29a20d219d97a622b98ea3c2f7292d56ea70d0188807931bf607afca58248329"
+            ]
+          }
+        },
+        "attempt_time_ns": "1789337888896042301",
+        "resolve_time_ns": "1789337889170886426",
+        "failure": null,
+        "preimage": "1111111111111111111111111111111111111111111111111111111111111111"
+      }
+    ],
+    "payment_index": "1",
+    "failure_reason": "FAILURE_REASON_NONE",
+    "first_hop_custom_records": {
+      "65540": "0129a20d219d97a622b98ea3c2f7292d56ea70d0188807931bf607afca58248329"
+    }
+  },
+  "invoice": {
+    "memo": "LabUSD edge test 001",
+    "r_preimage": "1111111111111111111111111111111111111111111111111111111111111111",
+    "r_hash": "02d449a31fbb267c8f352e9968a79e3e5fc95c1bbeaa502fd6454ebde5a4bedc",
+    "value": "1000",
+    "value_msat": "1000000",
+    "settled": true,
+    "creation_date": "1789337817",
+    "settle_date": "1789337889",
+    "payment_request": "lnbcrt-fixture-not-payable",
+    "description_hash": "",
+    "expiry": "86400",
+    "fallback_addr": "",
+    "cltv_expiry": "80",
+    "route_hints": [],
+    "private": false,
+    "add_index": "2",
+    "settle_index": "2",
+    "amt_paid": "1000000",
+    "amt_paid_sat": "1000",
+    "amt_paid_msat": "1000000",
+    "state": "SETTLED",
+    "htlcs": [
+      {
+        "chan_id": "115448720982016",
+        "htlc_index": "1",
+        "amt_msat": "1000000",
+        "accept_height": 113,
+        "accept_time": "1789337889",
+        "resolve_time": "1789337889",
+        "expiry_height": 196,
+        "state": "SETTLED",
+        "custom_records": {},
+        "mpp_total_amt_msat": "1000000",
+        "amp": null,
+        "custom_channel_data": ""
+      }
+    ],
+    "features": {
+      "8": {
+        "name": "tlv-onion",
+        "is_required": true,
+        "is_known": true
+      },
+      "14": {
+        "name": "payment-addr",
+        "is_required": true,
+        "is_known": true
+      },
+      "17": {
+        "name": "multi-path-payments",
+        "is_required": false,
+        "is_known": true
+      },
+      "25": {
+        "name": "route-blinding",
+        "is_required": false,
+        "is_known": true
+      }
+    },
+    "is_keysend": false,
+    "payment_addr": "2222222222222222222222222222222222222222222222222222222222222222",
+    "is_amp": false,
+    "amp_invoice_state": {},
+    "is_blinded": false,
+    "blinded_path_config": null
+  }
+}

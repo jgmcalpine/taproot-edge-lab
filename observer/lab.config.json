@@ -1,0 +1,20 @@
+{
+  "assetName": "LabUSD",
+  "assetId": "d75fc6e900b3360edfc8452537858fea520fa1f9eaeefca90d51bfb1ebc0fbbd",
+  "carolPubkey": "0316d7b50bc4c36e8766a0b9bd4e2222adf15b4c23b2efa9de8abff12cb9e94c37",
+  "containers": {},
+  "users": { "bob": "litd", "carol": "litd", "alice": "lnd" },
+  "lncliArgs": { "bob": [], "carol": [], "alice": [] },
+  "litcliArgs": [
+    "--rpcserver=localhost:8443",
+    "--tlscertpath=/home/litd/.lit/tls.cert",
+    "--macaroonpath=/home/litd/.lit/regtest/lit.macaroon"
+  ],
+  "tapcliArgs": [
+    "--rpcserver=localhost:8443",
+    "--tlscertpath=/home/litd/.lit/tls.cert",
+    "--macaroonpath=/home/litd/.tapd/data/regtest/admin.macaroon"
+  ],
+  "feeLimitSat": 500,
+  "paymentTimeoutSeconds": 60
+}

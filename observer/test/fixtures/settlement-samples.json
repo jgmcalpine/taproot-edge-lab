@@ -1,0 +1,91 @@
+{
+  "initial": [
+    {
+      "node": "carol",
+      "remotePubkey": "020663058b8f8e838ad818ec9c4461615a5193ecd0732279e859045c6d076995b3",
+      "channelPoint": "c2f7bc63a59da85779043d4bf2c2fa146032f9b20d37fa5f182c9bbfc8692b0b:0",
+      "channelId": "0b2b69c8bf9b2c185ffa370db2f9326014fac2f24b3d047957a89da563bcf7c2",
+      "scid": "122045790748672",
+      "routingIds": [
+        "122045790748672",
+        "17592186044416000000"
+      ],
+      "active": true,
+      "commitmentType": "SIMPLE_TAPROOT_OVERLAY",
+      "btcLocalSat": "708",
+      "btcRemoteSat": "95428",
+      "btcUnsettledSat": "354",
+      "pendingHtlcs": [
+        {
+          "paymentHash": "84126d0dd850199be29021aadbaee68cb9199047b1cb7ec9894ddb1e3562783c",
+          "htlcId": "2",
+          "incoming": true,
+          "amountSat": "354"
+        }
+      ],
+      "assetIncomingHtlcUnits": "1001",
+      "assetOutgoingHtlcUnits": "0",
+      "assetId": "d75fc6e900b3360edfc8452537858fea520fa1f9eaeefca90d51bfb1ebc0fbbd",
+      "assetLocal": "2002",
+      "assetRemote": "96997",
+      "assetFunding": "100000"
+    },
+    {
+      "node": "carol",
+      "remotePubkey": "0346fc71c5a3f5d3e5245e4801884685d99596be36e53282fb50fe8a0418e8d47e",
+      "channelPoint": "2920e9360a404e9ca2ff98625ffb0c3c6e94ce024fe5c0ce859e0994533fff48:0",
+      "channelId": "48ff3f5394099e85cec0e54f02ce946e3c0cfb5f6298ffa29c4e400a36e92029",
+      "scid": "115448720982016",
+      "routingIds": [
+        "115448720982016"
+      ],
+      "active": true,
+      "commitmentType": "ANCHORS",
+      "btcLocalSat": "983530",
+      "btcRemoteSat": "13000",
+      "btcUnsettledSat": "0",
+      "pendingHtlcs": []
+    }
+  ],
+  "final": [
+    {
+      "node": "carol",
+      "remotePubkey": "020663058b8f8e838ad818ec9c4461615a5193ecd0732279e859045c6d076995b3",
+      "channelPoint": "c2f7bc63a59da85779043d4bf2c2fa146032f9b20d37fa5f182c9bbfc8692b0b:0",
+      "channelId": "0b2b69c8bf9b2c185ffa370db2f9326014fac2f24b3d047957a89da563bcf7c2",
+      "scid": "122045790748672",
+      "routingIds": [
+        "122045790748672",
+        "17592186044416000000"
+      ],
+      "active": true,
+      "commitmentType": "SIMPLE_TAPROOT_OVERLAY",
+      "btcLocalSat": "1062",
+      "btcRemoteSat": "95858",
+      "btcUnsettledSat": "0",
+      "pendingHtlcs": [],
+      "assetIncomingHtlcUnits": "0",
+      "assetOutgoingHtlcUnits": "0",
+      "assetId": "d75fc6e900b3360edfc8452537858fea520fa1f9eaeefca90d51bfb1ebc0fbbd",
+      "assetLocal": "3003",
+      "assetRemote": "96997",
+      "assetFunding": "100000"
+    },
+    {
+      "node": "carol",
+      "remotePubkey": "0346fc71c5a3f5d3e5245e4801884685d99596be36e53282fb50fe8a0418e8d47e",
+      "channelPoint": "2920e9360a404e9ca2ff98625ffb0c3c6e94ce024fe5c0ce859e0994533fff48:0",
+      "channelId": "48ff3f5394099e85cec0e54f02ce946e3c0cfb5f6298ffa29c4e400a36e92029",
+      "scid": "115448720982016",
+      "routingIds": [
+        "115448720982016"
+      ],
+      "active": true,
+      "commitmentType": "ANCHORS",
+      "btcLocalSat": "983530",
+      "btcRemoteSat": "13000",
+      "btcUnsettledSat": "0",
+      "pendingHtlcs": []
+    }
+  ]
+}
