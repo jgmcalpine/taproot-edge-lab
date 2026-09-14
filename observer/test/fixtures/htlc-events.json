@@ -1,0 +1,178 @@
+[
+  {
+    "node": "bob",
+    "observer_receive_timestamp": "2026-09-13T22:30:17.100Z",
+    "event": {
+      "incoming_channel_id": "0",
+      "outgoing_channel_id": "0",
+      "incoming_htlc_id": "0",
+      "outgoing_htlc_id": "0",
+      "timestamp_ns": "0",
+      "event_type": "UNKNOWN",
+      "subscribed_event": {},
+      "event": "subscribed_event"
+    }
+  },
+  {
+    "node": "bob",
+    "observer_receive_timestamp": "2026-09-13T22:30:17.100Z",
+    "event": {
+      "incoming_channel_id": "0",
+      "outgoing_channel_id": "122045790748672",
+      "incoming_htlc_id": "0",
+      "outgoing_htlc_id": "7",
+      "timestamp_ns": "1789338617000001000",
+      "event_type": "SEND",
+      "forward_event": {
+        "info": {
+          "incoming_timelock": 0,
+          "outgoing_timelock": 220,
+          "incoming_amt_msat": "0",
+          "outgoing_amt_msat": "354000"
+        }
+      },
+      "event": "forward_event"
+    }
+  },
+  {
+    "node": "carol",
+    "observer_receive_timestamp": "2026-09-13T22:30:17.100Z",
+    "event": {
+      "incoming_channel_id": "122045790748672",
+      "outgoing_channel_id": "115448720982016",
+      "incoming_htlc_id": "7",
+      "outgoing_htlc_id": "1",
+      "timestamp_ns": "1789338617000002000",
+      "event_type": "FORWARD",
+      "forward_event": {
+        "info": {
+          "incoming_timelock": 220,
+          "outgoing_timelock": 180,
+          "incoming_amt_msat": "354000",
+          "outgoing_amt_msat": "1000000"
+        }
+      },
+      "event": "forward_event"
+    }
+  },
+  {
+    "node": "alice",
+    "observer_receive_timestamp": "2026-09-13T22:30:17.100Z",
+    "event": {
+      "incoming_channel_id": "115448720982016",
+      "outgoing_channel_id": "0",
+      "incoming_htlc_id": "1",
+      "outgoing_htlc_id": "0",
+      "timestamp_ns": "1789338617000003000",
+      "event_type": "RECEIVE",
+      "settle_event": {
+        "preimage": "ERERERERERERERERERERERERERERERERERERERERERE="
+      },
+      "event": "settle_event"
+    }
+  },
+  {
+    "node": "alice",
+    "observer_receive_timestamp": "2026-09-13T22:30:17.100Z",
+    "event": {
+      "incoming_channel_id": "115448720982016",
+      "outgoing_channel_id": "0",
+      "incoming_htlc_id": "1",
+      "outgoing_htlc_id": "0",
+      "timestamp_ns": "1789338617000004000",
+      "event_type": "UNKNOWN",
+      "final_htlc_event": {
+        "settled": true,
+        "offchain": true
+      },
+      "event": "final_htlc_event"
+    }
+  },
+  {
+    "node": "carol",
+    "observer_receive_timestamp": "2026-09-13T22:30:17.100Z",
+    "event": {
+      "incoming_channel_id": "122045790748672",
+      "outgoing_channel_id": "115448720982016",
+      "incoming_htlc_id": "7",
+      "outgoing_htlc_id": "1",
+      "timestamp_ns": "1789338617000005000",
+      "event_type": "FORWARD",
+      "settle_event": {
+        "preimage": "ERERERERERERERERERERERERERERERERERERERERERE="
+      },
+      "event": "settle_event"
+    }
+  },
+  {
+    "node": "carol",
+    "observer_receive_timestamp": "2026-09-13T22:30:17.100Z",
+    "event": {
+      "incoming_channel_id": "122045790748672",
+      "outgoing_channel_id": "0",
+      "incoming_htlc_id": "7",
+      "outgoing_htlc_id": "0",
+      "timestamp_ns": "1789338617000006000",
+      "event_type": "UNKNOWN",
+      "final_htlc_event": {
+        "settled": true,
+        "offchain": true
+      },
+      "event": "final_htlc_event"
+    }
+  },
+  {
+    "node": "bob",
+    "observer_receive_timestamp": "2026-09-13T22:30:17.100Z",
+    "event": {
+      "incoming_channel_id": "0",
+      "outgoing_channel_id": "122045790748672",
+      "incoming_htlc_id": "0",
+      "outgoing_htlc_id": "7",
+      "timestamp_ns": "1789338617000007000",
+      "event_type": "SEND",
+      "settle_event": {
+        "preimage": "ERERERERERERERERERERERERERERERERERERERERERE="
+      },
+      "event": "settle_event"
+    }
+  },
+  {
+    "node": "bob",
+    "observer_receive_timestamp": "2026-09-13T22:30:17.100Z",
+    "event": {
+      "incoming_channel_id": "0",
+      "outgoing_channel_id": "122045790748672",
+      "incoming_htlc_id": "0",
+      "outgoing_htlc_id": "8",
+      "timestamp_ns": "1789338617000008000",
+      "event_type": "SEND",
+      "link_fail_event": {
+        "info": {
+          "incoming_timelock": 0,
+          "outgoing_timelock": 220,
+          "incoming_amt_msat": "0",
+          "outgoing_amt_msat": "355000"
+        },
+        "wire_failure": "TEMPORARY_CHANNEL_FAILURE",
+        "failure_detail": "INSUFFICIENT_BALANCE",
+        "failure_string": "insufficient balance"
+      },
+      "event": "link_fail_event"
+    }
+  },
+  {
+    "node": "carol",
+    "observer_receive_timestamp": "2026-09-13T22:30:17.100Z",
+    "event": {
+      "incoming_channel_id": "122045790748672",
+      "outgoing_channel_id": "115448720982016",
+      "incoming_htlc_id": "9",
+      "outgoing_htlc_id": "2",
+      "timestamp_ns": "1789338617000009000",
+      "event_type": "FORWARD",
+      "forward_fail_event": {},
+      "event": "forward_fail_event"
+    }
+  }
+]

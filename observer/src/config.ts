@@ -8,6 +8,7 @@ export function options(args: string[]) {
     "amount-sat": { type: "string" }, invoice: { type: "string" },
     config: { type: "string" }, out: { type: "string", default: "traces" },
     help: { type: "boolean", short: "h" },
+    "htlc-grace-ms": { type: "string" },
   }});
   if (values.invoice !== undefined && !values.invoice.trim()) throw new Error("--invoice must not be empty");
   if (values.invoice && values["amount-sat"]) throw new Error("Use either --invoice or --amount-sat");
@@ -15,12 +16,18 @@ export function options(args: string[]) {
   if (!/^[1-9]\d*$/.test(amountSat) || !Number.isSafeInteger(Number(amountSat) * 1000)) {
     throw new Error("--amount-sat must be a positive, safely representable integer");
   }
-  return { amountSat, invoice: values.invoice, configPath: values.config,
+  const htlcGraceMs = values["htlc-grace-ms"] === undefined ? undefined : Number(values["htlc-grace-ms"]);
+  if (htlcGraceMs !== undefined && (!/^\d+$/.test(values["htlc-grace-ms"]!) || !Number.isSafeInteger(htlcGraceMs) || htlcGraceMs > 5000)) {
+    throw new Error("--htlc-grace-ms must be an integer from 0 to 5000");
+  }
+  return { amountSat, invoice: values.invoice, configPath: values.config, htlcGraceMs,
     out: resolve(values.out!), help: values.help };
 }
 
 export function loadConfig(path?: string, env: NodeJS.ProcessEnv = process.env): Config {
   const config: Config = JSON.parse(readFileSync(path ?? new URL("../lab.config.json", import.meta.url), "utf8"));
+  // Older complete Milestone 01 configs inherit the central HTLC defaults.
+  config.htlc ??= JSON.parse(readFileSync(new URL("../lab.config.json", import.meta.url), "utf8")).htlc;
   config.assetId = env.LAB_ASSET_ID ?? config.assetId;
   config.carolPubkey = env.LAB_CAROL_PUBKEY ?? config.carolPubkey;
   config.containers ??= {};
@@ -40,6 +47,12 @@ export function loadConfig(path?: string, env: NodeJS.ProcessEnv = process.env):
   for (const node of ["bob", "carol", "alice"] as const) {
     if (typeof config.users?.[node] !== "string" || !config.users[node]) throw new Error(`config: missing users.${node}`);
     arrays.push(config.lncliArgs?.[node]);
+    for (const paths of [config.htlc.tlsCertPaths, config.htlc.macaroonPaths]) {
+      if (typeof paths?.[node] !== "string" || !/^\/[^\r\n\0]+$/.test(paths[node])) throw new Error(`config: invalid HTLC credential path for ${node}`);
+    }
+  }
+  for (const [field, min, max] of [["containerPort", 1, 65535], ["readinessTimeoutMs", 100, 60000], ["settlementGraceMs", 0, 5000]] as const) {
+    if (!Number.isSafeInteger(config.htlc[field]) || config.htlc[field] < min || config.htlc[field] > max) throw new Error(`config: invalid htlc.${field}`);
   }
   for (const args of arrays) {
     if (!Array.isArray(args) || args.some(a => typeof a !== "string" || !/^--[a-z0-9_-]+=[^\r\n]+$/.test(a) || /^--(network|chain|no-macaroons)=/.test(a))) {

@@ -5,6 +5,9 @@ export type Json = Record<string, unknown>;
 export type TraceEvent = {
   timestamp?: string;
   relativeMs?: number;
+  observerReceiveTimestamp?: string;
+  timestampNs?: string;
+  timestampSource?: "daemon" | "observer";
   node: NodeName | "system";
   layer: "bitcoin" | "lightning" | "taproot-assets" | "rfq" | "observer";
   type: string;
@@ -17,6 +20,15 @@ export type TraceEvent = {
   amountMsat?: string;
   incomingChannelId?: string;
   outgoingChannelId?: string;
+  incomingHtlcId?: string;
+  outgoingHtlcId?: string;
+  incomingAmountMsat?: string;
+  outgoingAmountMsat?: string;
+  eventType?: string;
+  payloadVariant?: string;
+  eventId?: string;
+  circuitKey?: string;
+  evidenceRefs?: string[];
   htlcId?: string;
   attemptId?: string;
   source: string;
@@ -76,4 +88,11 @@ export type Config = {
   tapcliArgs: string[];
   feeLimitSat: number;
   paymentTimeoutSeconds: number;
+  htlc: {
+    containerPort: number;
+    tlsCertPaths: Record<NodeName, string>;
+    macaroonPaths: Record<NodeName, string>;
+    readinessTimeoutMs: number;
+    settlementGraceMs: number;
+  };
 };

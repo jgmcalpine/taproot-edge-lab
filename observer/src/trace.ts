@@ -10,21 +10,28 @@ import { acceptedQuoteEvents, balanceDeltas, channels, correlate, hex, integer, 
 import { checkInvoice, checkLiquidity, checkTopology } from "./preflight.ts";
 import { renderSummary } from "./summary.ts";
 import type { Config, Json, Snapshot, TraceEvent } from "./model.ts";
+import { createHtlcSource } from "./htlc-source.ts";
+import type { HtlcEventSource } from "./htlc-source.ts";
+import { captureHtlcs } from "./htlc-capture.ts";
+import { correlateHtlcs, htlcNormalizer } from "./htlc-normalize.ts";
 
 export const limitations = [
-  "Installed LND 0.20 lncli help exposes no SubscribeHtlcEvents command. No live Bob/Carol/Alice SEND, FORWARD, RECEIVE or SETTLE notification is claimed.",
-  "Bob's --json --inflight_updates stream is captured live; Alice HTLC states and accepted RFQs are queried snapshots, not subscriptions.",
+  "SubscribeHtlcEvents is best-effort: events are not persisted, delivery is not guaranteed across failures/crashes, and events may be replayed after restart. Raw capture is evidence from one observation run, not an authoritative accounting database. No automatic reconnect is attempted.",
+  "Bob's --json --inflight_updates and all three LND switch streams are captured live. Alice's invoice/custom-field evidence and accepted RFQs are queried snapshots, not subscriptions.",
   "No daemon logs are collected. Carol's internal RFQ/conversion timeline is not directly instrumented.",
-  "Observer timestamps measure when records were read; node timestamps remain in event details. Repeated attempt snapshots are retained and must not be counted as separate HTLCs.",
+  "HTLC timestamps prefer LND timestamp_ns and retain observer receive time. Independent process clocks, buffering and millisecond display precision do not establish nanosecond causal order across nodes. CLI snapshots retain observer time because their daemon fields describe earlier lifecycle changes, not the snapshot's arrival.",
+  "Only identical HTLC messages (node, circuit IDs, role, payload variant, timestamp and payload) are deduplicated in events.ndjson; every raw occurrence is preserved. Circuit IDs correlate distinct lifecycle events, including partial FINAL events.",
   "The liquidity preflight uses an oracle decoder estimate plus fee allowance. It is not a binding edge quote or a reserve/pending-HTLC spendability guarantee.",
   "A stopped/timed-out docker client does not prove the daemon payment failed. UNKNOWN requires checking the saved invoice hash before another payment.",
 ];
 
-export type TraceOptions = { out: string; amountSat: string; invoice?: string };
-export type TraceDependencies = { executor?: (directory: string) => Executor; progress?: (message: string) => void; signal?: AbortSignal };
+export type TraceOptions = { out: string; amountSat: string; invoice?: string; htlcGraceMs?: number };
+export type TraceDependencies = { executor?: (directory: string) => Executor; progress?: (message: string) => void; signal?: AbortSignal;
+  htlcSource?: HtlcEventSource };
 
 export async function tracePayment(options: TraceOptions, originalConfig: Config, deps: TraceDependencies = {}) {
   const config = structuredClone(originalConfig);
+  if (options.htlcGraceMs !== undefined) config.htlc.settlementGraceMs = options.htlcGraceMs;
   const startedAt = new Date().toISOString();
   const directory = join(options.out, `${startedAt.replace(/:/g, "-").replace(/\.\d+Z$/, "Z")}-${randomBytes(4).toString("hex")}`);
   mkdirSync(join(directory, "raw"), { recursive: true, mode: 0o700 });
@@ -33,16 +40,20 @@ export async function tracePayment(options: TraceOptions, originalConfig: Config
   let before = emptySnapshot(), after = emptySnapshot(), hash: string | undefined;
   let paymentAttempted = false, resolved = false, status = "NOT_ATTEMPTED", invoice = options.invoice;
   let paymentExitCode: number | null = null;
-  const manifest: Json = { schemaVersion: 1, startedAt, status: "RUNNING", network: "regtest", config,
+  let capture: ReturnType<typeof captureHtlcs> | undefined;
+  const htlc = htlcNormalizer(startedAt);
+  const manifest: Json = { schemaVersion: 2, startedAt, status: "RUNNING", network: "regtest", config,
     invoiceCreated: false, paymentAttempted: false, limitations, warnings };
   const saveManifest = () => writeJson(join(directory, "manifest.json"), manifest);
   saveManifest();
-  for (const file of ["commands.ndjson", "events.ndjson", "payment.jsonl", "raw/bob-payment.jsonl"]) writeFileSync(join(directory, file), "", { mode: 0o600 });
+  for (const file of ["commands.ndjson", "events.ndjson", "payment.jsonl", "raw/bob-payment.jsonl", ...["bob", "carol", "alice"].map(n => `raw/htlc-${n}.ndjson`)]) writeFileSync(join(directory, file), "", { mode: 0o600 });
   writeJson(join(directory, "before.json"), before); writeJson(join(directory, "after.json"), after);
   let execute = deps.executor?.(directory) ?? createExecutor(directory, deps.signal);
   const emit = (event: TraceEvent) => {
-    const timestamp = new Date().toISOString();
-    const stamped = { ...event, timestamp, relativeMs: Date.parse(timestamp) - Date.parse(startedAt) };
+    const observerReceiveTimestamp = event.observerReceiveTimestamp ?? new Date().toISOString();
+    const timestamp = event.timestamp ?? observerReceiveTimestamp;
+    const stamped = { ...event, timestamp, observerReceiveTimestamp, timestampSource: event.timestampSource ?? "observer" as const,
+      relativeMs: event.relativeMs ?? Date.parse(timestamp) - Date.parse(startedAt) };
     events.push(stamped); appendFileSync(join(directory, "events.ndjson"), JSON.stringify(stamped) + "\n");
   };
   const query = async (command: Command) => {
@@ -98,6 +109,19 @@ export async function tracePayment(options: TraceOptions, originalConfig: Config
       }
     }));
     for (const r of helpResults) if (r.status === "rejected") throw r.reason;
+    for (const node of ["bob", "carol", "alice"] as const) {
+      if (!/^0\.20\.0-beta(?:$|[ .+-])/.test(String(before.nodes[node]?.info?.version))) throw new Error(`${node}: HTLC adapter requires verified LND 0.20.0-beta; inspect getinfo version before changing the pinned protocol`);
+    }
+    deps.progress?.("Connecting Bob, Carol and Alice HTLC streams; waiting for all subscribed_event messages…");
+    const source = deps.htlcSource ?? createHtlcSource(config, { connected: (node, info) =>
+      emit({ node, layer: "observer", type: "HTLC_CONNECTION_OPENED", observed: true, source: "docker-inspect/TLS", details: info }) });
+    capture = captureHtlcs(source, directory, config.htlc.readinessTimeoutMs, (record, reference) => {
+      const event = htlc.accept(record, reference); if (event) emit(event);
+    }, deps.signal);
+    await capture.ready;
+    capture.assertHealthy();
+    emit({ node: "system", layer: "observer", type: "HTLC_SUBSCRIPTIONS_READY", observed: true, source: "SubscribeHtlcEvents",
+      evidenceRefs: events.filter(e => e.type === "htlc_subscribed").flatMap(e => e.evidenceRefs ?? []) });
     if (!invoice) {
       const created = await query(nodeCommand(config, "alice", "lncli", ["addinvoice", `--amt=${options.amountSat}`, "--memo=Taproot Edge Lab trace"], "alice-invoice-created.json", "invoice-create"));
       invoice = typeof created.payment_request === "string" ? created.payment_request : undefined;
@@ -136,6 +160,7 @@ export async function tracePayment(options: TraceOptions, originalConfig: Config
       `--outgoing_chan_id=${topology.bobAsset.scid ?? topology.bobAsset.routingIds[0]}`, `--last_hop=${config.carolPubkey}`,
       "--max_parts=1", "--force", "--json", "--inflight_updates"], "bob-payment.jsonl", "payment");
     pay.timeoutMs = (config.paymentTimeoutSeconds + 30) * 1000;
+    capture.assertHealthy(); deps.signal?.throwIfAborted();
     paymentAttempted = true; manifest.paymentAttempted = true; saveManifest();
     emit({ node: "system", layer: "observer", type: "PAYMENT_COMMAND_STARTED", observed: true, paymentHash: hash, source: "commands.ndjson" });
     try {
@@ -145,6 +170,16 @@ export async function tracePayment(options: TraceOptions, originalConfig: Config
   } catch (error) {
     errors.push(error instanceof Error ? error.message : String(error));
   } finally {
+    if (capture) {
+      if (paymentAttempted && !deps.signal?.aborted) {
+        deps.progress?.(`Keeping HTLC streams open for ${config.htlc.settlementGraceMs} ms to capture settlement updates…`);
+        await delay(config.htlc.settlementGraceMs, undefined, { signal: deps.signal }).catch(() => {});
+      }
+      const failure = await capture.stop();
+      if (failure && !errors.includes(failure.message)) errors.push(failure.message);
+      writeJson(join(directory, "htlc-streams.json"), { diagnostics: capture.diagnostics, duplicates: htlc.duplicates,
+        settlementGraceMs: config.htlc.settlementGraceMs, readiness: "All three subscribed_event payloads required before invoice creation/payment" });
+    }
     if (deps.signal?.aborted && !deps.executor) execute = createExecutor(directory);
     if (resolved) {
       deps.progress?.("Capturing AFTER state and writing correlations, balance deltas, and summary…");
@@ -171,6 +206,15 @@ export async function tracePayment(options: TraceOptions, originalConfig: Config
     const last = payments.at(-1);
     status = !paymentAttempted ? "NOT_ATTEMPTED" : last?.status === "SUCCEEDED" ? "SUCCEEDED" : last?.status === "FAILED" ? "FAILED" : "UNKNOWN";
     const correlation = correlate(payments, after.aliceInvoice, before, events);
+    const switchCorrelation = correlateHtlcs(events, before, payments, after.aliceInvoice, `raw/alice-invoice-${after.rawSuffix}.json`);
+    if (status === "SUCCEEDED") {
+      const linked = new Set(switchCorrelation.lifecycles.filter(l => l.correlatedPaymentHash === correlation.paymentHash).flatMap(l => l.eventIds));
+      for (const [node, role] of [["bob", "SEND"], ["carol", "FORWARD"], ["alice", "RECEIVE"]] as const) {
+        if (!events.some(e => e.node === node && e.eventType === role && linked.has(e.eventId!))) errors.push(`${node}: no payment-correlated ${role} switch event captured; live coverage is incomplete.`);
+      }
+      if (!events.some(e => e.node === "bob" && e.type === "htlc_send" && e.outgoingAmountMsat !== undefined && linked.has(e.eventId!))) errors.push("Bob's amount-bearing SEND payload was not captured; inspect raw/htlc-bob.ndjson.");
+      if (!events.some(e => e.node === "carol" && e.type === "htlc_forward" && e.incomingAmountMsat !== undefined && e.outgoingAmountMsat !== undefined && linked.has(e.eventId!))) errors.push("Carol's amount-bearing FORWARD payload was not captured; inspect raw/htlc-carol.ndjson.");
+    }
     if (status === "SUCCEEDED" && (!correlation.hashesMatch || !correlation.preimagesMatch || !correlation.preimageHashesToPaymentHash)) errors.push("Settlement correlation is missing or mismatched; success evidence is incomplete.");
     if (status === "SUCCEEDED") {
       const route = correlation.routes.length === 1 ? correlation.routes[0] : undefined;
@@ -185,8 +229,10 @@ export async function tracePayment(options: TraceOptions, originalConfig: Config
       }
     }
     if (status === "UNKNOWN") errors.push("No terminal payment update observed. The payment may still settle; inspect this invoice hash before retrying.");
-    writeJson(join(directory, "correlation.json"), correlation);
+    writeJson(join(directory, "correlation.json"), { ...correlation, htlc: switchCorrelation });
     writeJson(join(directory, "deltas.json"), balanceDeltas(before, after));
+    events.sort((a, b) => (a.relativeMs ?? 0) - (b.relativeMs ?? 0));
+    writeFileSync(join(directory, "events.ndjson"), events.map(e => JSON.stringify(e) + "\n").join(""), { mode: 0o600 });
     writeFileSync(join(directory, "summary.md"), renderSummary({ config, before, after, payments, events, status, errors, limitations: [...limitations, ...warnings] }), { mode: 0o600 });
     Object.assign(manifest, { endedAt: new Date().toISOString(), status, paymentExitCode, errors, warnings,
       evidenceComplete: errors.length === 0 && paymentAttempted, normalizedPaymentUpdates: payments.length,

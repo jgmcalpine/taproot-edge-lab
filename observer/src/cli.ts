@@ -8,6 +8,7 @@ try {
 
 pnpm trace:payment [--amount-sat 1000 | --invoice '<BOLT11>']
                    [--config observer/lab.local.json] [--out traces]
+                   [--htlc-grace-ms 1000]
 
 Default: create a 1000 sat Alice invoice; pay once from Bob through Carol.
 Configuration and evidence guide: observer/README.md`);

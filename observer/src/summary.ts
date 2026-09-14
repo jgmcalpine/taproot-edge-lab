@@ -1,5 +1,6 @@
 import { balanceDeltas, correlate, hex, integer } from "./normalize.ts";
 import type { Config, Json, Snapshot, TraceEvent } from "./model.ts";
+import { renderHtlcSummary } from "./htlc-summary.ts";
 
 export type SummaryInput = { config: Config; before: Snapshot; after: Snapshot; payments: Json[];
   events: TraceEvent[]; status: string; errors: string[]; limitations: string[] };
@@ -25,7 +26,7 @@ export function renderSummary(input: SummaryInput): string {
   const economicDecrease = bobAssetDelta !== undefined && BigInt(bobAssetDelta) <= 0n ? (-BigInt(bobAssetDelta)).toString() : undefined;
   const lines = ["# Payment Trace", "", "## Result", "", status, "",
     `Bob's last streamed status: ${show(final?.status)}. Alice's captured state: ${show(invoice?.state)}.`, "",
-    "OBSERVED below means a captured CLI response, or an exact comparison/calculation of those responses. Snapshot records are not live HTLC notifications.", "",
+    "OBSERVED means a captured CLI/RPC field. CORRELATED means comparisons or links across observations; balance changes are labeled arithmetic. INFERRED denotes protocol interpretation. Snapshot records are distinct from live HTLC notifications.", "",
     "## Invoice", "", "Recipient: Alice (configured plain LND)",
     `Requested: ${sats(invoice?.value_msat)} sats`, `Payment hash: ${show(hex(invoice?.r_hash))}`,
     `Invoice state: ${show(invoice?.state)}`, `Evidence: \`raw/alice-invoice-created.json\` (when created), \`raw/alice-invoice-before.json\`, \`raw/alice-invoice-${afterSuffix}.json\`.`, "",
@@ -52,13 +53,14 @@ export function renderSummary(input: SummaryInput): string {
     `- BTC to forward in successful route: ${sats(route?.hops[1]?.amountToForwardMsat)} sats`,
     `- Carol hop fee: ${sats(route?.hops[0]?.feeMsat)} sats / ${show(route?.hops[0]?.feeMsat)} msat`,
     `- Total payment fee: ${sats(final?.fee_msat)} sats / ${show(final?.fee_msat)} msat`,
-    "Evidence: all `payment.jsonl` updates, `raw/bob-payment.jsonl`, and `correlation.json`. Route fields describe Bob's attempt; no Carol FORWARD notification was captured.", "",
+    "Evidence: all `payment.jsonl` updates, `raw/bob-payment.jsonl`, and `correlation.json`. These route fields describe Bob's attempt; Carol's separately captured RPC messages appear in the HTLC switch timeline below.", "",
     "### Three different amounts", "",
     "| Quantity | Observed value | Evidence |", "| --- | --- | --- |",
     `| Economic asset movement (Bob local decrease) | ${show(economicDecrease)} asset units (see signed delta below) | before/after channel asset balances |`,
     `| First-hop satoshi carrier | ${sats(route?.carrierMsat)} sats | route.first_hop_amount_msat |`,
     `| BTC received by Alice | ${sats(after.aliceInvoice?.amt_paid_msat)} sats | Alice lookupinvoice |`, "",
     "INFERRED protocol interpretation: the asset amount lives in the overlay/custom channel data; the first-hop HTLC also carries a satoshi-denominated anchor at the LND layer. The carrier is not the economic LabUSD amount or Alice's invoice value. Carol's asset/BTC edge role is supported by the route and balance changes, not a captured internal conversion event. See the protocol references in `observer/README.md`.", "",
+    ...renderHtlcSummary(input),
     "## Settlement", "", `Bob payment hash: ${show(correlation.paymentHash)}`,
     `Alice invoice hash: ${show(correlation.invoiceHash)}`, `Hash comparison: ${check(correlation.hashesMatch)}`,
     `Bob preimage: ${show(correlation.paymentPreimage)}`, `Preimage comparison with Alice: ${check(correlation.preimagesMatch)}`,
@@ -77,7 +79,7 @@ export function renderSummary(input: SummaryInput): string {
     `Evidence: \`before.json\`, \`after.json\` (final sample: ${afterSuffix}), \`deltas.json\`, and raw per-node channel responses. Every AFTER sample is retained. Snapshots are sequential RPCs, not an atomic ledger view. Attributing the entire delta to this payment assumes no concurrent lab activity.`, "",
     "## What this demonstrates", "");
   if (status === "SUCCEEDED" && correlation.hashesMatch && correlation.preimagesMatch && routeKnown && correlation.aliceCustomFieldsEmpty && route?.rfqId) {
-    lines.push("OBSERVED: Bob's successful asset-bearing first hop and Alice's settled BTC invoice share a payment hash and preimage; the RFQ ID is present in Bob's route metadata and Alice's HTLC custom fields are empty.", "",
+    lines.push("CORRELATED: Bob's successful asset-bearing first hop and Alice's settled BTC invoice share a payment hash and preimage. Separately OBSERVED: the RFQ ID is present in Bob's route metadata and Alice's HTLC custom fields are empty.", "",
       "INFERRED from this evidence and the configured plain-LND recipient: Carol bridges the asset edge to the BTC channel, so Alice can receive without Taproot Assets support. This run demonstrates this two-hop lab path; it does not establish behavior for every Lightning route.");
   } else lines.push("The captured evidence does not establish the full successful asset-to-BTC demonstration. Inspect the result, correlation checks, and errors before drawing that conclusion.");
   lines.push("", "## Observability limits", "", ...limitations.map(l => `- ${l}`));

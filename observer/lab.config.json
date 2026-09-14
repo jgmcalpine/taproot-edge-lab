@@ -16,5 +16,20 @@
     "--macaroonpath=/home/litd/.tapd/data/regtest/admin.macaroon"
   ],
   "feeLimitSat": 500,
-  "paymentTimeoutSeconds": 60
+  "paymentTimeoutSeconds": 60,
+  "htlc": {
+    "containerPort": 10009,
+    "tlsCertPaths": {
+      "bob": "/home/litd/.lnd/tls.cert",
+      "carol": "/home/litd/.lnd/tls.cert",
+      "alice": "/home/lnd/.lnd/tls.cert"
+    },
+    "macaroonPaths": {
+      "bob": "/home/litd/.lnd/data/chain/bitcoin/regtest/admin.macaroon",
+      "carol": "/home/litd/.lnd/data/chain/bitcoin/regtest/admin.macaroon",
+      "alice": "/home/lnd/.lnd/data/chain/bitcoin/regtest/admin.macaroon"
+    },
+    "readinessTimeoutMs": 10000,
+    "settlementGraceMs": 1000
+  }
 }
